@@ -1,7 +1,7 @@
 #ifndef BILIARD_HPP
 #define BILIARD_HPP
 
-#include <vector>
+// #include <vector>
 
 namespace bl {
 
@@ -11,8 +11,8 @@ struct Point {
 };
 
 struct Cushion {
-  Point right{0.};
-  Point left{0.};
+  Point right{};
+  Point left{};
 };
 
 struct Result {
@@ -21,7 +21,7 @@ struct Result {
 };
 
 struct Ball {
-  Point start_point{0.};
+  Point start_point{};
   double start_angle{0.};
 };
 
@@ -45,9 +45,10 @@ Point collision(
 class Biliard {
   Cushion upper;
   Cushion lower;
-  std::vector<Ball> entries;
+  // std::vector<Ball> entries;
 
  public:
+ 
 };
 
 }  // namespace bl
