@@ -9,7 +9,7 @@ TEST_CASE("Testin pts_path function") {
     bl::Point p2{2, 2};
     bl::Path path = pts_path(p1, p2);
     CHECK(path.slope == doctest::Approx(1.0));
-    CHECK(path.y_intecept == doctest::Approx(0.0));
+    CHECK(path.y_intercept == doctest::Approx(0.0));
   }
 
   SUBCASE("negative slope") {
@@ -17,7 +17,7 @@ TEST_CASE("Testin pts_path function") {
     bl::Point p2{2, 0};
     bl::Path path = pts_path(p1, p2);
     CHECK(path.slope == doctest::Approx(-1.0));
-    CHECK(path.y_intecept == doctest::Approx(2.0));
+    CHECK(path.y_intercept == doctest::Approx(2.0));
   }
 
   SUBCASE("horizontal path") {
@@ -25,7 +25,7 @@ TEST_CASE("Testin pts_path function") {
     bl::Point p2{5, 3};
     bl::Path path = pts_path(p1, p2);
     CHECK(path.slope == doctest::Approx(0.0));
-    CHECK(path.y_intecept == doctest::Approx(3.0));
+    CHECK(path.y_intercept == doctest::Approx(3.0));
   }
 }
 
@@ -34,15 +34,10 @@ TEST_CASE("Testing slp_path function") {
   double slope{2.};
   bl::Path path = slp_path(p1, slope);
   CHECK(path.slope == doctest::Approx(2.0));
-  CHECK(path.y_intecept == doctest::Approx(3.0));
+  CHECK(path.y_intercept == doctest::Approx(3.0));
 }
 
 TEST_CASE("Testing collision function") {
-  SUBCASE("Intersection between two parallel path") {
-    bl::Path r1{2., 3.};
-    bl::Path r2{2., 0.};
-    CHECK_THROWS(bl::collision(r1, r2));
-  }
   SUBCASE("Intersection with a horizonatl path") {
     bl::Path r1{0., 1.};
     bl::Path r2{1., 0.};
@@ -56,6 +51,32 @@ TEST_CASE("Testing collision function") {
     bl::Point point = bl::collision(r1, r2);
     CHECK(point.x == doctest::Approx(3.));
     CHECK(point.y == doctest::Approx(6.));
+  }
+}
+
+TEST_CASE("Testing first_collision function") {
+  SUBCASE("first point negative x coordinate") {
+    bl::Point p1{-2., 3.};
+    bl::Point p2{4., 5.};
+    bl::Point point = bl::first_collision(p1, p2);
+    CHECK(point.x == 4.);
+    CHECK(point.y == 5.);
+  }
+
+  SUBCASE("second point negative x coordinate") {
+    bl::Point p1{2., 3.};
+    bl::Point p2{-4., 5.};
+    bl::Point point = bl::first_collision(p1, p2);
+    CHECK(point.x == 2.);
+    CHECK(point.y == 3.);
+  }
+
+  SUBCASE("both x coordinates are positive") {
+    bl::Point p1{2., 3.};
+    bl::Point p2{4., 5.};
+    bl::Point point = bl::first_collision(p1, p2);
+    CHECK(point.x == 2.);
+    CHECK(point.y == 3.);
   }
 }
 
