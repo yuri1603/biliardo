@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "biliard.hpp"
+// #include "biliard.hpp"
 
 namespace bl {
 
@@ -15,7 +15,7 @@ struct Statistics {
 };
 
 class sample {
-  std::vector<Result> entries_;
+  // std::vector<Result> entries_;
 };
 
 double mean(std::vector<double> const& entries_);

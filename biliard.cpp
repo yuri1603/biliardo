@@ -5,27 +5,18 @@
 
 namespace bl {
 
-Path pts_path(const Point &p1, const Point &p2) {
-  if (p1.y == p2.y) {
-    return Path{0, p2.y};
-  }
-  double m = (p2.y - p1.y) / (p2.x - p1.x);
-  double q = p2.y - p2.x * m;
-  return Path{m, q};
-}
-
-Path slp_path(const Point &p1, double slope1) {
-  double q = p1.y - slope1 * p1.x;
-  return Path{slope1, q};
-}
-
 Point collision(const Path &r1, const Path &r2) {
+  if (r1.slope == r2.slope) {
+    throw std::runtime_error("Paths are parallel"); 
+  }
   double x1 = (r1.y_intercept - r2.y_intercept) / (r2.slope - r1.slope);
   double x2 = r1.slope * x1 + r1.y_intercept;
   return Point{x1, x2};
 }
 
-Point first_collision(Point const &p1, Point const &p2) {
+Point first_collision(Path const &r1, Path const &r2, Path const &r3) {
+  Point p1 = collision(r1, r2);
+  Point p2 = collision(r1, r3);
   if (p1.x < 0) {
     return p2;
   }
@@ -35,8 +26,23 @@ Point first_collision(Point const &p1, Point const &p2) {
   return p1.x < p2.x ? p1 : p2;
 }
 
+Path::Path(Point const &p1, Point const &p2) : slope{0.}, y_intercept{p2.y} {
+  if (p1.y != p2.y) {
+    slope = (p2.y - p1.y) / (p2.x - p1.x);
+    y_intercept = p2.y - p2.x * slope;
+  }
+}
+
+Path::Path(const Point &p1, double slope1)
+    : slope{slope1}, y_intercept{p1.y - slope1 * p1.x} {}
+
+Path::Path(double slope_, double y_intercept_)
+    : slope{slope_}, y_intercept{y_intercept_} {}
+
 Biliard::Biliard(double l, double y1, double y2)
-    : upper{{l, y2}, {0., y1}}, lower{{l, -y2}, {0., -y1}} {
+    : upper_cushion({l, y2}, {0, y1}),
+      lower_cushion({l, -y2}, {0., -y1}),
+      lenght{l} {
   if (l <= 0.) {
     throw std::domain_error{"Biliard's lenght must be > 0"};
   }
@@ -46,18 +52,14 @@ Biliard::Biliard(double l, double y1, double y2)
 }
 
 Ball Biliard::Bounce(Ball const &b) {
-  Path up_cush = pts_path(upper.right, upper.left);
-  Path low_cush = pts_path(lower.right, lower.left);
-  Path ball_path = slp_path(b.start_point, b.slope);
-  Point first_coll1 = collision(up_cush, ball_path);
-  Point first_coll2 = collision(low_cush, ball_path);
-  Point first_pt_coll = first_collision(first_coll1, first_coll2);
-  if (first_pt_coll.x > upper.right.x) {
-    return Ball{{upper.right.x,
-                 ball_path.slope * upper.right.x + ball_path.y_intercept},
+  Path ball_path{b.start_point, b.slope};
+  Point collision_point =
+      first_collision(ball_path, lower_cushion, upper_cushion);
+  if (collision_point.x > lenght) {
+    return Ball{{lenght, ball_path.slope * lenght + ball_path.y_intercept},
                 ball_path.slope};
   } else {
-    
+    throw std::runtime_error("Not implemented the bouncing mode yet");
   }
 }
 }  // namespace bl
