@@ -80,6 +80,15 @@ TEST_CASE("Testing first_collision function") {
   }
 }
 
+TEST_CASE("Testing the no-bouncing mode") {
+  bl::Biliard bil(10., 5., 2.5);
+  bl::Ball b({0., 4.}, -0.5);
+  bl::Ball ball = bil.Bounce(b);
+  CHECK(ball.start_point.x == 10);
+  CHECK(ball.start_point.y == -1);
+  CHECK(ball.slope == -0.5);
+}
+
 // TEST_CASE("Testing Regression") {
 //   pf::Regression reg;
 //   pf::Point p1{1., 2.};

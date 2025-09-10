@@ -22,7 +22,7 @@ struct Cushion {
 
 struct Ball {
   Point start_point{};
-  double start_angle{0.};
+  double slope{0.};
 };
 
 struct Path {
