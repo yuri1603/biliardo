@@ -93,7 +93,7 @@ TEST_CASE("Testing bounce method") {
 }
 
 TEST_CASE("Testing dynamic method") {
-  SUBCASE("no bouncing case") {
+  SUBCASE("no bouncing case, right exit") {
     bl::Biliard bil{6., 4., 2.8};
     bl::Ball b_i{{0., 1.}, 1. / 6.};
     bl::Ball b_f = bil.Dynamic(b_i);
@@ -101,7 +101,7 @@ TEST_CASE("Testing dynamic method") {
     CHECK(b_f.start_point.y == 2.);
     CHECK(b_f.slope == doctest::Approx(1. / 6.));
   }
-  SUBCASE("one bounce case") {
+  SUBCASE("one bounce on the upper cushuion case, right exit") {
     bl::Biliard bil{6., 4., 2.8};
     bl::Ball b_i{{0., 2.}, 1. / 3.};
     bl::Ball b_f = bil.Dynamic(b_i);
@@ -109,12 +109,28 @@ TEST_CASE("Testing dynamic method") {
     CHECK(b_f.start_point.y == doctest::Approx(1.29032));
     CHECK(b_f.slope == doctest::Approx(-0.87096));
   }
-  SUBCASE("one bounce case") {
+  SUBCASE("one bounce on the lower bounce case, right exit") {
     bl::Biliard bil{6., 4., 2.8};
     bl::Ball b_i{{0., -2.}, -1. / 3.};
     bl::Ball b_f = bil.Dynamic(b_i);
     CHECK(b_f.start_point.x == 6.);
     CHECK(b_f.start_point.y == doctest::Approx(-1.29032));
     CHECK(b_f.slope == doctest::Approx(0.87096));
+  }
+  SUBCASE("two bounce, left exit") {
+    bl::Biliard bil{6., 4., 2.8};
+    bl::Ball b_i{{0., -2.02304}, 2.51934};
+    bl::Ball b_f = bil.Dynamic(b_i);
+    CHECK(b_f.start_point.x == 0.);
+    CHECK(b_f.start_point.y == 0.);
+    CHECK(b_f.slope == 0.);
+  }
+  SUBCASE("two bounce, left exit") {
+    bl::Biliard bil{10., 4., 2.8};
+    bl::Ball b_i{{0., -2.6742}, 1.06060};
+    bl::Ball b_f = bil.Dynamic(b_i);
+    CHECK(b_f.start_point.x == 10.);
+    CHECK(b_f.start_point.y == doctest::Approx(-0.0629696));
+    CHECK(b_f.slope == doctest::Approx (3.50023));
   }
 }
