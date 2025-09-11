@@ -35,7 +35,9 @@ class Biliard {
  public:
   Biliard(double l, double y1, double y2);
 
-  Ball Bounce(Ball const& b);
+  Ball Dynamic(Ball const& b);
+
+  Path Bounce(Path const& r1, Path const& r2);
 };
 
 }  // namespace bl

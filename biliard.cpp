@@ -7,7 +7,7 @@ namespace bl {
 
 Point collision(const Path &r1, const Path &r2) {
   if (r1.slope == r2.slope) {
-    throw std::runtime_error("Paths are parallel"); 
+    return Point{-1., 0.};
   }
   double x1 = (r1.y_intercept - r2.y_intercept) / (r2.slope - r1.slope);
   double x2 = r1.slope * x1 + r1.y_intercept;
@@ -49,17 +49,50 @@ Biliard::Biliard(double l, double y1, double y2)
   if (y1 <= 0. || y2 <= 0) {
     throw std::domain_error{"Biliard must be open"};
   }
+  if (y1 < y2) {
+    throw std::runtime_error(
+        "Biliard must be a triangle with the basis ont he right side");
+  }
 }
 
-Ball Biliard::Bounce(Ball const &b) {
+// Ball Biliard::Bounce(Ball const &b) {
+//   Path ball_path{b.start_point, b.slope};
+//   Point collision_point =
+//       first_collision(ball_path, lower_cushion, upper_cushion);
+//   if (collision_point.x > lenght) {
+//     return Ball{{lenght, ball_path.slope * lenght + ball_path.y_intercept},
+//                 ball_path.slope};
+//   } else {
+//     throw std::runtime_error("Not implemented the bouncing mode yet");
+//   }
+// }
+
+Path Biliard::Bounce(Path const &r1, Path const &r2) {
+  Point collision_point = collision(r1, r2);
+  double new_slope =
+      (r1.slope * std::pow(r2.slope, 2) - r1.slope + 2 * r2.slope) /
+      (1 - std::pow(r2.slope, 2) + 2 * r2.slope * r1.slope);
+  return Path{collision_point, new_slope};
+}
+
+Ball Biliard::Dynamic(Ball const &b) {
   Path ball_path{b.start_point, b.slope};
   Point collision_point =
       first_collision(ball_path, lower_cushion, upper_cushion);
-  if (collision_point.x > lenght) {
-    return Ball{{lenght, ball_path.slope * lenght + ball_path.y_intercept},
-                ball_path.slope};
-  } else {
-    throw std::runtime_error("Not implemented the bouncing mode yet");
+  while (collision_point.x <= lenght && collision_point.x >= 0) {
+    if (collision_point.y > 0) {
+      ball_path = Bounce(ball_path, upper_cushion);
+      collision_point = collision(ball_path, lower_cushion);
+    } else if (collision_point.y < 0) {
+      ball_path = Bounce(ball_path, lower_cushion);
+      collision_point = collision(ball_path, upper_cushion);
+    }
   }
+  if (collision_point.x < 0 ||
+      std::fabs(collision_point.y) > upper_cushion.y_intercept) {
+    return Ball{{0., 0.}, 0.};
+  }
+  return Ball{{lenght, ball_path.slope * lenght + ball_path.y_intercept},
+              ball_path.slope};
 }
 }  // namespace bl
