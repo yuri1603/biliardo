@@ -1,6 +1,8 @@
 #ifndef BILIARD_HPP
 #define BILIARD_HPP
 
+#include <vector>
+
 namespace bl {
 
 struct Point {
@@ -9,9 +11,14 @@ struct Point {
 };
 
 struct Ball {
-  Point start_point{};
-  double slope{0.};
+  double y_coord{0.};
+  double angle{0.};
 };
+
+// struct Ball {
+//   Point start_point{};
+//   double slope{0.};
+// };
 
 struct Path {
   double slope{0.};
@@ -27,17 +34,19 @@ Point collision(
 
 Point first_collision(Path const& r1, Path const& r2, Path const& r3);
 
+Path Bounce(Path const& r1, Path const& r2);
+
 class Biliard {
-  Path upper_cushion;
-  Path lower_cushion;
-  double lenght;
+  Path upper_cushion_;
+  Path lower_cushion_;
+  double lenght_;
 
  public:
   Biliard(double l, double y1, double y2);
 
-  Ball Dynamic(Ball const& b);
+  void Dynamic(Ball& b);
 
-  Path Bounce(Path const& r1, Path const& r2);
+  void in_to_fin_balls(std::vector<Ball> &balls);
 };
 
 }  // namespace bl

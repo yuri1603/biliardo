@@ -1,5 +1,6 @@
 #include "biliard.hpp"
 
+#include <algorithm>
 #include <cmath>
 #include <stdexcept>
 
@@ -40,9 +41,9 @@ Path::Path(double slope_, double y_intercept_)
     : slope{slope_}, y_intercept{y_intercept_} {}
 
 Biliard::Biliard(double l, double y1, double y2)
-    : upper_cushion({l, y2}, {0, y1}),
-      lower_cushion({l, -y2}, {0., -y1}),
-      lenght{l} {
+    : upper_cushion_({l, y2}, {0, y1}),
+      lower_cushion_({l, -y2}, {0., -y1}),
+      lenght_{l} {
   if (l <= 0.) {
     throw std::domain_error{"Biliard's lenght must be > 0"};
   }
@@ -55,19 +56,7 @@ Biliard::Biliard(double l, double y1, double y2)
   }
 }
 
-// Ball Biliard::Bounce(Ball const &b) {
-//   Path ball_path{b.start_point, b.slope};
-//   Point collision_point =
-//       first_collision(ball_path, lower_cushion, upper_cushion);
-//   if (collision_point.x > lenght) {
-//     return Ball{{lenght, ball_path.slope * lenght + ball_path.y_intercept},
-//                 ball_path.slope};
-//   } else {
-//     throw std::runtime_error("Not implemented the bouncing mode yet");
-//   }
-// }
-
-Path Biliard::Bounce(Path const &r1, Path const &r2) {
+Path Bounce(Path const &r1, Path const &r2) {
   Point collision_point = collision(r1, r2);
   double new_slope =
       (r1.slope * std::pow(r2.slope, 2) - r1.slope + 2 * r2.slope) /
@@ -75,24 +64,32 @@ Path Biliard::Bounce(Path const &r1, Path const &r2) {
   return Path{collision_point, new_slope};
 }
 
-Ball Biliard::Dynamic(Ball const &b) {
-  Path ball_path{b.start_point, b.slope};
+void Biliard::Dynamic(Ball &b) {
+  Path ball_path{{0., b.y_coord}, std::tan(b.angle)};
   Point collision_point =
-      first_collision(ball_path, lower_cushion, upper_cushion);
-  while (collision_point.x <= lenght && collision_point.x >= 0) {
+      first_collision(ball_path, lower_cushion_, upper_cushion_);
+  while (collision_point.x <= lenght_ && collision_point.x >= 0) {
     if (collision_point.y > 0) {
-      ball_path = Bounce(ball_path, upper_cushion);
-      collision_point = collision(ball_path, lower_cushion);
+      ball_path = Bounce(ball_path, upper_cushion_);
+      collision_point = collision(ball_path, lower_cushion_);
     } else if (collision_point.y < 0) {
-      ball_path = Bounce(ball_path, lower_cushion);
-      collision_point = collision(ball_path, upper_cushion);
+      ball_path = Bounce(ball_path, lower_cushion_);
+      collision_point = collision(ball_path, upper_cushion_);
     }
   }
   if (collision_point.x < 0 ||
-      std::fabs(collision_point.y) > upper_cushion.y_intercept) {
-    return Ball{{0., 0.}, 0.};
+      std::fabs(collision_point.y) > upper_cushion_.y_intercept) {
+    b = Ball{0., 0.};
+  } else if (collision_point.x >= lenght_ &&
+             std::fabs(collision_point.y) <= upper_cushion_.y_intercept) {
+    b = Ball{ball_path.slope * lenght_ + ball_path.y_intercept,
+             std::atan(ball_path.slope)};
   }
-  return Ball{{lenght, ball_path.slope * lenght + ball_path.y_intercept},
-              ball_path.slope};
 }
+
+void Biliard::in_to_fin_balls(std::vector<Ball> &balls) {
+  std::for_each(balls.begin(), balls.end(),
+                [this](Ball &ball) { this->Dynamic(ball); });
+}
+
 }  // namespace bl

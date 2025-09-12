@@ -1,7 +1,11 @@
 #ifndef STATISTICS_HPP
 #define STATISTICS_HPP
 
+#include <algorithm>
+#include <cmath>
 #include <vector>
+
+#include "biliard.hpp"
 
 // #include "biliard.hpp"
 
@@ -14,8 +18,12 @@ struct Statistics {
   double kurtosis{0.};
 };
 
-class sample {
-  // std::vector<Result> entries_;
+class Sample {
+  std::vector<Ball> entries_;
+
+ public:
+  Sample(std::vector<Ball> &balls);
+
 };
 
 double mean(std::vector<double> const& entries_);
@@ -26,3 +34,14 @@ double kurtosis(std::vector<double> const& entries_);
 }  // namespace bl
 
 #endif
+
+
+
+
+
+
+
+
+
+
+

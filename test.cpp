@@ -86,7 +86,7 @@ TEST_CASE("Testing bounce method") {
     bl::Biliard bil(4., 3., 1);
     bl::Path r1{2., -7.};
     bl::Path r2{0.5, -3.};
-    bl::Path path = bil.Bounce(r1, r2);
+    bl::Path path = Bounce(r1, r2);
     CHECK(path.slope == doctest::Approx(-2.0 / 11.0));
     CHECK(path.y_intercept == doctest::Approx(-13.0 / 11.0));
   }
@@ -95,42 +95,52 @@ TEST_CASE("Testing bounce method") {
 TEST_CASE("Testing dynamic method") {
   SUBCASE("no bouncing case, right exit") {
     bl::Biliard bil{6., 4., 2.8};
-    bl::Ball b_i{{0., 1.}, 1. / 6.};
-    bl::Ball b_f = bil.Dynamic(b_i);
-    CHECK(b_f.start_point.x == 6.);
-    CHECK(b_f.start_point.y == 2.);
-    CHECK(b_f.slope == doctest::Approx(1. / 6.));
+    bl::Ball b_i{1., 0.16515};
+    bil.Dynamic(b_i);
+    CHECK(b_i.y_coord == doctest::Approx(2.));
+    CHECK(b_i.angle == doctest::Approx(0.16515));
   }
   SUBCASE("one bounce on the upper cushuion case, right exit") {
     bl::Biliard bil{6., 4., 2.8};
-    bl::Ball b_i{{0., 2.}, 1. / 3.};
-    bl::Ball b_f = bil.Dynamic(b_i);
-    CHECK(b_f.start_point.x == 6.);
-    CHECK(b_f.start_point.y == doctest::Approx(1.29032));
-    CHECK(b_f.slope == doctest::Approx(-0.87096));
+    bl::Ball b_i{2., 0.32175};
+    bil.Dynamic(b_i);
+    CHECK(b_i.y_coord == doctest::Approx(1.29032));
+    CHECK(b_i.angle == doctest::Approx(-0.71654));
   }
   SUBCASE("one bounce on the lower bounce case, right exit") {
     bl::Biliard bil{6., 4., 2.8};
-    bl::Ball b_i{{0., -2.}, -1. / 3.};
-    bl::Ball b_f = bil.Dynamic(b_i);
-    CHECK(b_f.start_point.x == 6.);
-    CHECK(b_f.start_point.y == doctest::Approx(-1.29032));
-    CHECK(b_f.slope == doctest::Approx(0.87096));
+    bl::Ball b_i{-2., -0.32175};
+    bil.Dynamic(b_i);
+    CHECK(b_i.y_coord == doctest::Approx(-1.29032));
+    CHECK(b_i.angle == doctest::Approx(0.71654));
   }
   SUBCASE("two bounce, left exit") {
     bl::Biliard bil{6., 4., 2.8};
-    bl::Ball b_i{{0., -2.02304}, 2.51934};
-    bl::Ball b_f = bil.Dynamic(b_i);
-    CHECK(b_f.start_point.x == 0.);
-    CHECK(b_f.start_point.y == 0.);
-    CHECK(b_f.slope == 0.);
+    bl::Ball b_i{-2.02304, 1.19294};
+    bil.Dynamic(b_i);
+    CHECK(b_i.y_coord == 0.);
+    CHECK(b_i.angle == 0.);
   }
-  SUBCASE("two bounce, left exit") {
+  SUBCASE("two bounce, right exit") {
     bl::Biliard bil{10., 4., 2.8};
-    bl::Ball b_i{{0., -2.6742}, 1.06060};
-    bl::Ball b_f = bil.Dynamic(b_i);
-    CHECK(b_f.start_point.x == 10.);
-    CHECK(b_f.start_point.y == doctest::Approx(-0.0629696));
-    CHECK(b_f.slope == doctest::Approx (3.50023));
+    bl::Ball b_i{-2.6742, 0.81480};
+    bil.Dynamic(b_i);
+    CHECK(b_i.y_coord == doctest::Approx(-0.062876));
+    CHECK(b_i.angle == doctest::Approx(1.29251));
   }
+}
+
+TEST_CASE("Testing the in_to_fin_balls method") {
+  bl::Biliard bil(6., 4., 2.8);
+  std::vector<bl::Ball> balls{
+      {1., 0.16515}, {2., 0.32175}, {-2., -0.32175}, {-2.02304, 1.19294}};
+  bil.in_to_fin_balls(balls);
+  CHECK(balls[0].angle == doctest::Approx (0.16515));
+  CHECK(balls[0].y_coord == doctest::Approx(2.));
+  CHECK(balls[1].angle == doctest::Approx (-0.71654));
+  CHECK(balls[1].y_coord == doctest::Approx(1.29032));
+  CHECK(balls[2].angle == doctest::Approx (0.71654));
+  CHECK(balls[2].y_coord == doctest::Approx(-1.29032));
+  CHECK(balls[3].angle == doctest::Approx (0.));
+  CHECK(balls[3].y_coord == doctest::Approx(0.));
 }
