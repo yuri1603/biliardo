@@ -1,7 +1,9 @@
+#include <vector>
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 
 #include "biliard.hpp"
 #include "doctest.h"
+#include "statistics.hpp"
 
 TEST_CASE("Testing collision function") {
   SUBCASE("Intersection with a horizontal path, first constructor") {
@@ -218,5 +220,17 @@ TEST_CASE("Testing the in_to_fin_balls method") {
   CHECK(stat_vecs.y_coord.size() == 3);
 }
 
-
-
+TEST_CASE("Testing stats method") {
+  SUBCASE("ensamble size is 5") {
+    std::vector<double> vec{5., 2., -3., -1., 0.};
+    bl::Statistics result = bl::stats(vec);
+    CHECK(result.mean == doctest::Approx(0.6).epsilon(0.001));
+    CHECK(result.std_dev == doctest::Approx(3.0496).epsilon(0.001));
+    CHECK(result.skewness == doctest::Approx(0.2606).epsilon(0.001));
+    CHECK(result.kurtosis == doctest::Approx(1.2794).epsilon(0.001));
+  }
+  SUBCASE("ensamble size is less than 2") {
+    std::vector<double> vec{3.};
+    CHECK_THROWS(bl::stats(vec));
+  }
+}

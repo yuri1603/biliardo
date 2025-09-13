@@ -47,6 +47,8 @@ class Biliard {
   void Dynamic(Ball& b);
 
   Sample split(std::vector<Ball> &balls);
+
+  std::vector<Ball> random_balls(long unsigned int N);
 };
 
 }  // namespace bl

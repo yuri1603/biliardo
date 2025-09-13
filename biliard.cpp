@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <cmath>
 #include <stdexcept>
+#include <random>
+#include <vector>
 
 namespace bl {
 
@@ -58,6 +60,18 @@ Path Bounce(Path const &r1, Path const &r2) {
       (r1.slope * std::pow(r2.slope, 2) - r1.slope + 2 * r2.slope) /
       (1 - std::pow(r2.slope, 2) + 2 * r2.slope * r1.slope);
   return Path{collision_point, new_slope};
+}
+
+std::vector<Ball> Biliard::random_balls(long unsigned int N) {
+  std::random_device r;
+  std::default_random_engine eng{r()};
+  std::normal_distribution<double> dist_y{0., 3.}; // cambia valori
+  std::normal_distribution<double> dist_theta{0., 0.5};
+  std::vector<Ball> random_balls(N);
+  std::generate(random_balls.begin(), random_balls.end(), [&]() {
+    return Ball{dist_y(eng), dist_theta(eng)};
+  });
+  return random_balls;
 }
 
 void Biliard::Dynamic(Ball &b) {
