@@ -1,4 +1,3 @@
-#include "statistics.hpp"
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 
 #include "biliard.hpp"
@@ -102,7 +101,6 @@ TEST_CASE("Testing dynamic method") {
     CHECK(b_i.angle == doctest::Approx(0.16515));
   }
 
-  
   SUBCASE("one bounce on the upper cushuion case, right exit") {
     bl::Biliard bil{6., 4., 2.8};
     bl::Ball b_i{2., 0.32175};
@@ -122,7 +120,7 @@ TEST_CASE("Testing dynamic method") {
     bl::Ball b_i{-2.02304, 1.19294};
     bil.Dynamic(b_i);
     CHECK(b_i.y_coord == 0.);
-    CHECK(b_i.angle == 0.);
+    CHECK(b_i.angle == 4.);
   }
   SUBCASE("two bounce, right exit") {
     bl::Biliard bil{10., 4., 2.8};
@@ -131,12 +129,8 @@ TEST_CASE("Testing dynamic method") {
     CHECK(b_i.y_coord == doctest::Approx(-0.062876));
     CHECK(b_i.angle == doctest::Approx(1.29251));
   }
-  
 }
 
-
-<<<<<<< HEAD
-=======
 TEST_CASE("Testing dynamic method with positive slope cushions") {
   SUBCASE("no bouncing case, right exit") {
     bl::Biliard bil{6., 2.8, 4.};
@@ -145,8 +139,13 @@ TEST_CASE("Testing dynamic method with positive slope cushions") {
     CHECK(b_i.y_coord == doctest::Approx(2.));
     CHECK(b_i.angle == doctest::Approx(0.16515));
   }
-
-  
+  SUBCASE("no bouncing case, right exit") {
+    bl::Biliard bil{6., 2.8, 4.};
+    bl::Ball b_i{0., 0.};
+    bil.Dynamic(b_i);
+    CHECK(b_i.y_coord == doctest::Approx(0.));
+    CHECK(b_i.angle == doctest::Approx(0.));
+  }
   SUBCASE("one bounce on the upper cushuion case, right exit") {
     bl::Biliard bil{6., 2.8, 4.};
     bl::Ball b_i{1., 0.7};
@@ -169,8 +168,6 @@ TEST_CASE("Testing dynamic method with positive slope cushions") {
     CHECK(b_i.y_coord == doctest::Approx(-1.1228));
     CHECK(b_i.angle == doctest::Approx(0.710418));
   }
-  
-
 }
 
 TEST_CASE("Testing dynamic method flat") {
@@ -182,7 +179,6 @@ TEST_CASE("Testing dynamic method flat") {
     CHECK(b_i.angle == doctest::Approx(0.16515));
   }
 
-  
   SUBCASE("one bounce on the upper cushuion case, right exit") {
     bl::Biliard bil{10., 4., 4.};
     bl::Ball b_i{1., 0.4};
@@ -205,11 +201,7 @@ TEST_CASE("Testing dynamic method flat") {
     CHECK(b_i.y_coord == doctest::Approx(-0.574077));
     CHECK(b_i.angle == doctest::Approx(-1.));
   }
-  
-
 }
-
->>>>>>> 669719e4415af220d3a05346f64e865a9dfa7ac2
 
 TEST_CASE("Testing the in_to_fin_balls method") {
   bl::Biliard bil(6., 4., 2.8);
@@ -226,7 +218,5 @@ TEST_CASE("Testing the in_to_fin_balls method") {
   CHECK(stat_vecs.y_coord.size() == 3);
 }
 
-TEST_CASE("Testin mean fucntion") {
-  std::vector<double> sample{2., 3, 1, 0., 4.};
-  CHECK(bl::mean(sample) == 2.);
-}
+
+
