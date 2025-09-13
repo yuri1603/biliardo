@@ -40,6 +40,7 @@ Path::Path(const Point &p1, double slope1)
 Path::Path(double slope_, double y_intercept_)
     : slope{slope_}, y_intercept{y_intercept_} {}
 
+
 Biliard::Biliard(double l, double y1, double y2)
     : upper_cushion_({l, y2}, {0, y1}),
       lower_cushion_({l, -y2}, {0., -y1}),
@@ -50,11 +51,8 @@ Biliard::Biliard(double l, double y1, double y2)
   if (y1 <= 0. || y2 <= 0) {
     throw std::domain_error{"Biliard must be open"};
   }
-  if (y1 < y2) {
-    throw std::runtime_error(
-        "Biliard must be a triangle with the basis ont he right side");
-  }
 }
+
 
 Path Bounce(Path const &r1, Path const &r2) {
   Point collision_point = collision(r1, r2);
@@ -63,6 +61,8 @@ Path Bounce(Path const &r1, Path const &r2) {
       (1 - std::pow(r2.slope, 2) + 2 * r2.slope * r1.slope);
   return Path{collision_point, new_slope};
 }
+
+
 
 void Biliard::Dynamic(Ball &b) {
   Path ball_path{{0., b.y_coord}, std::tan(b.angle)};
@@ -77,15 +77,23 @@ void Biliard::Dynamic(Ball &b) {
       collision_point = collision(ball_path, upper_cushion_);
     }
   }
-  if (collision_point.x < 0 ||
-      std::fabs(collision_point.y) > upper_cushion_.y_intercept) {
+
+  if (upper_cushion_.slope < 0) { 
+     
+  if (collision_point.x < 0 || collision_point.x > collision(upper_cushion_, lower_cushion_).x) {
     b = Ball{0., 0.};
-  } else if (collision_point.x >= lenght_ &&
-             std::fabs(collision_point.y) <= upper_cushion_.y_intercept) {
+  } else  {
     b = Ball{ball_path.slope * lenght_ + ball_path.y_intercept,
              std::atan(ball_path.slope)};
   }
 }
+   else {
+      b = Ball{ball_path.slope * lenght_ + ball_path.y_intercept,
+             std::atan(ball_path.slope)};
+   }
+}
+
+
 
 Sample Biliard::split(std::vector<Ball> &balls) {
   std::vector<Ball> balls_sample;
