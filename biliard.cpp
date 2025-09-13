@@ -2,8 +2,8 @@
 
 #include <algorithm>
 #include <cmath>
-#include <stdexcept>
 #include <random>
+#include <stdexcept>
 #include <vector>
 
 namespace bl {
@@ -62,38 +62,44 @@ Path Bounce(Path const &r1, Path const &r2) {
   return Path{collision_point, new_slope};
 }
 
-std::vector<Ball> Biliard::random_balls(long unsigned int N) {
+std::vector<Ball> Biliard::random_balls(long unsigned int N, double y_mean,
+                                        double y_std_dev, double angle_mean,
+                                        double angle_std_dev) {
   std::random_device r;
   std::default_random_engine eng{r()};
-  std::normal_distribution<double> dist_y{0., 3.}; // cambia valori
-  std::normal_distribution<double> dist_theta{0., 0.5};
+  std::normal_distribution<double> dist_y{y_mean, y_std_dev};  // cambia valori
+  std::normal_distribution<double> dist_theta{angle_mean, angle_std_dev};
   std::vector<Ball> random_balls(N);
-  std::generate(random_balls.begin(), random_balls.end(), [&]() {
-    return Ball{dist_y(eng), dist_theta(eng)};
-  });
+  std::generate(random_balls.begin(), random_balls.end(),
+                [&]() { return Ball{dist_y(eng), dist_theta(eng)}; });
   return random_balls;
 }
 
 void Biliard::Dynamic(Ball &b) {
-  Path ball_path{{0., b.y_coord}, std::tan(b.angle)};
-  Point collision_point =
-      first_collision(ball_path, lower_cushion_, upper_cushion_);
-  while (collision_point.x <= lenght_ && collision_point.x >= 0) {
-    if (collision_point.y > 0) {
-      ball_path = Bounce(ball_path, upper_cushion_);
-      collision_point = collision(ball_path, lower_cushion_);
-    } else if (collision_point.y < 0) {
-      ball_path = Bounce(ball_path, lower_cushion_);
-      collision_point = collision(ball_path, upper_cushion_);
-    }
-  }
-  if (upper_cushion_.slope < 0 &&
-      (collision_point.x < 0 ||
-       collision_point.x > collision(upper_cushion_, lower_cushion_).x)) {
-    b = Ball{0., 4.};
+  if (std::abs(b.y_coord) > upper_cushion_.y_intercept ||
+      std::abs(b.angle) > (M_PI / 2)) {
+    b = Ball{0., 5.};
   } else {
-    b = Ball{ball_path.slope * lenght_ + ball_path.y_intercept,
-             std::atan(ball_path.slope)};
+    Path ball_path{{0., b.y_coord}, std::tan(b.angle)};
+    Point collision_point =
+        first_collision(ball_path, lower_cushion_, upper_cushion_);
+    while (collision_point.x <= lenght_ && collision_point.x >= 0) {
+      if (collision_point.y > 0) {
+        ball_path = Bounce(ball_path, upper_cushion_);
+        collision_point = collision(ball_path, lower_cushion_);
+      } else if (collision_point.y < 0) {
+        ball_path = Bounce(ball_path, lower_cushion_);
+        collision_point = collision(ball_path, upper_cushion_);
+      }
+    }
+    if (upper_cushion_.slope < 0 &&
+        (collision_point.x < 0 ||
+         collision_point.x > collision(upper_cushion_, lower_cushion_).x)) {
+      b = Ball{0., 4.};
+    } else {
+      b = Ball{ball_path.slope * lenght_ + ball_path.y_intercept,
+               std::atan(ball_path.slope)};
+    }
   }
 }
 

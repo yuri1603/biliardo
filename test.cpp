@@ -95,6 +95,13 @@ TEST_CASE("Testing bounce method") {
 }
 
 TEST_CASE("Testing dynamic method") {
+  SUBCASE("ball outside biliard") {
+    bl::Biliard bil(3., 2., 2.);
+    bl::Ball b_i{12., 0.54};
+    bil.Dynamic(b_i);
+    CHECK(b_i.angle == 5.);
+    CHECK(b_i.y_coord == 0.);
+  }
   SUBCASE("no bouncing case, right exit") {
     bl::Biliard bil{6., 4., 2.8};
     bl::Ball b_i{1., 0.16515};

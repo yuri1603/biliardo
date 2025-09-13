@@ -46,9 +46,11 @@ class Biliard {
 
   void Dynamic(Ball& b);
 
-  Sample split(std::vector<Ball> &balls);
+  Sample split(std::vector<Ball>& balls);
 
-  std::vector<Ball> random_balls(long unsigned int N);
+  std::vector<Ball> random_balls(long unsigned int N, double y_mean,
+                                 double y_std_dev, double angle_mean,
+                                 double angle_std_dev);
 };
 
 }  // namespace bl
