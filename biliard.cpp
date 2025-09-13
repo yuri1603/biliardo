@@ -10,9 +10,9 @@ Point collision(const Path &r1, const Path &r2) {
   if (r1.slope == r2.slope) {
     return Point{-1., 0.};
   }
-  double x1 = (r1.y_intercept - r2.y_intercept) / (r2.slope - r1.slope);
-  double x2 = r1.slope * x1 + r1.y_intercept;
-  return Point{x1, x2};
+  double x = (r1.y_intercept - r2.y_intercept) / (r2.slope - r1.slope);
+  double y = r1.slope * x + r1.y_intercept;
+  return Point{x, y};
 }
 
 Point first_collision(Path const &r1, Path const &r2, Path const &r3) {
@@ -87,7 +87,7 @@ void Biliard::Dynamic(Ball &b) {
   }
 }
 
-Sample Biliard::in_to_fin_balls(std::vector<Ball> &balls) {
+Sample Biliard::split(std::vector<Ball> &balls) {
   std::vector<Ball> balls_sample;
   std::for_each(balls.begin(), balls.end(), [&, this](Ball &ball) {
     this->Dynamic(ball);
@@ -99,10 +99,11 @@ Sample Biliard::in_to_fin_balls(std::vector<Ball> &balls) {
   angles_sample.reserve(balls_sample.size());
   std::vector<double> y_coords_sample;
   y_coords_sample.reserve(balls_sample.size());
-  std::for_each(balls_sample.begin(), balls_sample.end(), [&](Ball const &ball) {
-    angles_sample.push_back(ball.angle);
-    y_coords_sample.push_back(ball.y_coord);
-  });
+  std::for_each(balls_sample.begin(), balls_sample.end(),
+                [&](Ball const &ball) {
+                  angles_sample.push_back(ball.angle);
+                  y_coords_sample.push_back(ball.y_coord);
+                });
   return Sample{angles_sample, y_coords_sample};
 }
 

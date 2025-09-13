@@ -46,7 +46,7 @@ class Biliard {
 
   void Dynamic(Ball& b);
 
-  Sample in_to_fin_balls(std::vector<Ball> &balls);
+  Sample split(std::vector<Ball> &balls);
 };
 
 }  // namespace bl

@@ -1,3 +1,4 @@
+#include "statistics.hpp"
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 
 #include "biliard.hpp"
@@ -130,11 +131,13 @@ TEST_CASE("Testing dynamic method") {
   }
 }
 
+
+
 TEST_CASE("Testing the in_to_fin_balls method") {
   bl::Biliard bil(6., 4., 2.8);
   std::vector<bl::Ball> balls{
       {1., 0.16515}, {2., 0.32175}, {-2., -0.32175}, {-2.02304, 1.19294}};
-  bl::Sample stat_vecs = bil.in_to_fin_balls(balls);
+  bl::Sample stat_vecs = bil.split(balls);
   CHECK(stat_vecs.angles[0] == doctest::Approx(0.16515));
   CHECK(stat_vecs.y_coord[0] == doctest::Approx(2.));
   CHECK(stat_vecs.angles[1] == doctest::Approx(-0.71654));
@@ -143,4 +146,9 @@ TEST_CASE("Testing the in_to_fin_balls method") {
   CHECK(stat_vecs.y_coord[2] == doctest::Approx(-1.29032));
   CHECK(stat_vecs.angles.size() == 3);
   CHECK(stat_vecs.y_coord.size() == 3);
+}
+
+TEST_CASE("Testin mean fucntion") {
+  std::vector<double> sample{2., 3, 1, 0., 4.};
+  CHECK(bl::mean(sample) == 2.);
 }
