@@ -134,13 +134,13 @@ TEST_CASE("Testing the in_to_fin_balls method") {
   bl::Biliard bil(6., 4., 2.8);
   std::vector<bl::Ball> balls{
       {1., 0.16515}, {2., 0.32175}, {-2., -0.32175}, {-2.02304, 1.19294}};
-  bil.in_to_fin_balls(balls);
-  CHECK(balls[0].angle == doctest::Approx (0.16515));
-  CHECK(balls[0].y_coord == doctest::Approx(2.));
-  CHECK(balls[1].angle == doctest::Approx (-0.71654));
-  CHECK(balls[1].y_coord == doctest::Approx(1.29032));
-  CHECK(balls[2].angle == doctest::Approx (0.71654));
-  CHECK(balls[2].y_coord == doctest::Approx(-1.29032));
-  CHECK(balls[3].angle == doctest::Approx (0.));
-  CHECK(balls[3].y_coord == doctest::Approx(0.));
+  bl::Sample stat_vecs = bil.in_to_fin_balls(balls);
+  CHECK(stat_vecs.angles[0] == doctest::Approx(0.16515));
+  CHECK(stat_vecs.y_coord[0] == doctest::Approx(2.));
+  CHECK(stat_vecs.angles[1] == doctest::Approx(-0.71654));
+  CHECK(stat_vecs.y_coord[1] == doctest::Approx(1.29032));
+  CHECK(stat_vecs.angles[2] == doctest::Approx(0.71654));
+  CHECK(stat_vecs.y_coord[2] == doctest::Approx(-1.29032));
+  CHECK(stat_vecs.angles.size() == 3);
+  CHECK(stat_vecs.y_coord.size() == 3);
 }

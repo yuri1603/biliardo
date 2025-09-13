@@ -87,9 +87,23 @@ void Biliard::Dynamic(Ball &b) {
   }
 }
 
-void Biliard::in_to_fin_balls(std::vector<Ball> &balls) {
-  std::for_each(balls.begin(), balls.end(),
-                [this](Ball &ball) { this->Dynamic(ball); });
+Sample Biliard::in_to_fin_balls(std::vector<Ball> &balls) {
+  std::vector<Ball> balls_sample;
+  std::for_each(balls.begin(), balls.end(), [&, this](Ball &ball) {
+    this->Dynamic(ball);
+    if (ball.angle != 0 || ball.y_coord != 0) {
+      balls_sample.push_back(ball);
+    }
+  });
+  std::vector<double> angles_sample;
+  angles_sample.reserve(balls_sample.size());
+  std::vector<double> y_coords_sample;
+  y_coords_sample.reserve(balls_sample.size());
+  std::for_each(balls_sample.begin(), balls_sample.end(), [&](Ball const &ball) {
+    angles_sample.push_back(ball.angle);
+    y_coords_sample.push_back(ball.y_coord);
+  });
+  return Sample{angles_sample, y_coords_sample};
 }
 
 }  // namespace bl

@@ -15,10 +15,10 @@ struct Ball {
   double angle{0.};
 };
 
-// struct Ball {
-//   Point start_point{};
-//   double slope{0.};
-// };
+struct Sample {
+  std::vector<double> angles;
+  std::vector<double> y_coord;
+};
 
 struct Path {
   double slope{0.};
@@ -46,7 +46,7 @@ class Biliard {
 
   void Dynamic(Ball& b);
 
-  void in_to_fin_balls(std::vector<Ball> &balls);
+  Sample in_to_fin_balls(std::vector<Ball> &balls);
 };
 
 }  // namespace bl

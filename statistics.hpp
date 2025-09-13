@@ -18,30 +18,13 @@ struct Statistics {
   double kurtosis{0.};
 };
 
-class Sample {
-  std::vector<Ball> entries_;
+Ball operator+(const Ball& ball_1, const Ball& ball_2);
 
- public:
-  Sample(std::vector<Ball> &balls);
-
-};
-
-double mean(std::vector<double> const& entries_);
-double std_dev(std::vector<double> const& entries_);
-double skewness(std::vector<double> const& entries_);
-double kurtosis(std::vector<double> const& entries_);
+double mean(std::vector<double> const&);
+double std_dev(std::vector<double> const&);
+double skewness(std::vector<double> const&);
+double kurtosis(std::vector<double> const&);
 
 }  // namespace bl
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
