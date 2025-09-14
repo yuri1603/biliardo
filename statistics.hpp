@@ -14,7 +14,6 @@ struct Statistics {
   double kurtosis{0.};
 };
 
-std::size_t size(std::vector<double> const& sample);
 double mean(std::vector<double> const& sample);
 double std_dev(std::vector<double> const& sample);
 double skewness(std::vector<double> const& sample);

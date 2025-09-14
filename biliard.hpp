@@ -44,7 +44,11 @@ class Biliard {
  public:
   Biliard(double l, double y1, double y2);
 
+  inline double left_limit() const { return upper_cushion_.y_intercept; }
+
   void Dynamic(Ball& b);
+
+  void Graphic_Dynamic(Ball& b);
 
   Sample split(std::vector<Ball>& balls);
 

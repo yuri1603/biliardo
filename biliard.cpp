@@ -43,13 +43,13 @@ Path::Path(double slope_, double y_intercept_)
     : slope{slope_}, y_intercept{y_intercept_} {}
 
 Biliard::Biliard(double l, double y1, double y2)
-    : upper_cushion_({l, y2}, {0, y1}),
+    : upper_cushion_({l, y2}, {0., y1}),
       lower_cushion_({l, -y2}, {0., -y1}),
       lenght_{l} {
   if (l <= 0.) {
     throw std::domain_error{"Biliard's lenght must be > 0"};
   }
-  if (y1 <= 0. || y2 <= 0) {
+  if (y1 <= 0. || y2 <= 0.) {
     throw std::domain_error{"Biliard must be open"};
   }
 }
@@ -57,8 +57,8 @@ Biliard::Biliard(double l, double y1, double y2)
 Path Bounce(Path const &r1, Path const &r2) {
   Point collision_point = collision(r1, r2);
   double new_slope =
-      (r1.slope * std::pow(r2.slope, 2) - r1.slope + 2 * r2.slope) /
-      (1 - std::pow(r2.slope, 2) + 2 * r2.slope * r1.slope);
+      (r1.slope * std::pow(r2.slope, 2) - r1.slope + 2. * r2.slope) /
+      (1 - std::pow(r2.slope, 2) + 2. * r2.slope * r1.slope);
   return Path{collision_point, new_slope};
 }
 
