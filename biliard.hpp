@@ -45,16 +45,21 @@ class Biliard {
   Biliard(double l, double y1, double y2);
 
   inline double left_limit() const { return upper_cushion_.y_intercept; }
+  inline double right_limit() const {
+    return upper_cushion_.slope * lenght_ + upper_cushion_.y_intercept;
+  }
+  inline double lenght() const { return lenght_; }
+  inline double incl() const { return upper_cushion_.slope; }
 
   void Dynamic(Ball& b);
-
-  void Graphic_Dynamic(Ball& b);
 
   Sample split(std::vector<Ball>& balls);
 
   std::vector<Ball> random_balls(long unsigned int N, double y_mean,
                                  double y_std_dev, double angle_mean,
                                  double angle_std_dev);
+
+  void Dynamic_Trace (Ball& b, std::vector<Point> &coll);
 };
 
 }  // namespace bl

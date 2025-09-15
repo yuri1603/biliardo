@@ -1,3 +1,4 @@
+#include <SFML/Graphics.hpp>
 #include <iostream>
 
 #include "biliard.hpp"
@@ -9,7 +10,7 @@ int main() {
 
   std::cout << "=== Simulatore biliardo triangolare ===\n";
 
-  biliard_geometry(bil);
+  bl::biliard_geometry(bil);
 
   while (running) {
     std::cout << "\n> ";
