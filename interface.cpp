@@ -9,8 +9,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
-// #include "TH1D.h"
-// #include "TCanvas.h"
+#include "TH1.h"
+#include "TCanvas.h"
 
 #include "biliard.hpp"
 #include "statistics.hpp"
@@ -95,13 +95,13 @@ void run_multi_launch(bl::Biliard &bil) {
               << angle_result.skewness << '\n';
     std::cout << "Il coefficiente di appiattimento degli angoli finali è: "
               << angle_result.kurtosis << '\n';
-    // std::cout << "Vuoi visualizzare gli istogrammi dei parametri in uscita? [Y/n]\n";
-    // char ans;
-    // std::cin >> ans;
-    // if (ans == 'y') {
-    //   MakeHists(ensemble.angles, ensemble.y_coord);
-    //   show_histograms_sfml();
-    // }
+    std::cout << "Vuoi visualizzare gli istogrammi dei parametri in uscita? [Y/n]\n";
+    char ans;
+    std::cin >> ans;
+    if (ans == 'y') {
+      MakeHists(ensemble.angles, ensemble.y_coord);
+      show_histograms_sfml();
+    }
     std::cout << "Vuoi effettuare un altro lancio multiplo? [Y/n] \n";
     std::string answer;
     std::cin >> answer;
@@ -270,46 +270,46 @@ void trajectory(const std::vector<Point> &coll, bl::Biliard &bil,
   }
 }
 
-// void MakeHists(const std::vector<double>& v1,
-//                const std::vector<double>& v2)
-// {
-//   // Istogramma 1
-//   auto mm1 = std::minmax_element(v1.begin(), v1.end());
-//   TH1D h1("h1", "Dataset 1;Valore;Conteggi", 50, *mm1.first, *mm1.second);
-//   for (double x : v1) h1.Fill(x);
-//   TCanvas c1("c1","c1",900,600);
-//   h1.Draw();
-//   c1.SaveAs("hist1.png");
+void MakeHists(const std::vector<double>& v1,
+               const std::vector<double>& v2)
+{
+  // Istogramma 1
+  auto mm1 = std::minmax_element(v1.begin(), v1.end());
+  TH1D h1("h1", "Dataset 1;Valore;Conteggi", 50, *mm1.first, *mm1.second);
+  for (double x : v1) h1.Fill(x);
+  TCanvas c1("c1","c1",700,500);
+  h1.Draw();
+  c1.SaveAs("hist1.png");
 
-//   // Istogramma 2
-//   auto mm2 = std::minmax_element(v2.begin(), v2.end());
-//   TH1D h2("h2", "Dataset 2;Valore;Conteggi", 50, *mm2.first, *mm2.second);
-//   for (double x : v2) h2.Fill(x);
-//   TCanvas c2("c2","c2",900,600);
-//   h2.Draw();
-//   c2.SaveAs("hist2.png");
-// }
+  // Istogramma 2
+  auto mm2 = std::minmax_element(v2.begin(), v2.end());
+  TH1D h2("h2", "Dataset 2;Valore;Conteggi", 50, *mm2.first, *mm2.second);
+  for (double x : v2) h2.Fill(x);
+  TCanvas c2("c2","c2",700,500);
+  h2.Draw();
+  c2.SaveAs("hist2.png");
+}
 
-// void show_histograms_sfml() {
-//   sf::RenderWindow win(sf::VideoMode(1600, 900), "Istogrammi");
+void show_histograms_sfml() {
+  sf::RenderWindow win(sf::VideoMode(1600, 600), "Istogrammi");
 
-//   sf::Texture t1, t2;
-//   t1.loadFromFile("hist1.png");
-//   t2.loadFromFile("hist2.png");
+  sf::Texture t1, t2;
+  t1.loadFromFile("hist1.png");
+  t2.loadFromFile("hist2.png");
 
-//   sf::Sprite s1(t1), s2(t2);
-//   s1.setPosition(0.f, 0.f);
-//   s2.setPosition(800.f, 0.f); // sposta il secondo a destra (metà finestra)
+  sf::Sprite s1(t1), s2(t2);
+  s1.setPosition(50.f, 50.f);
+  s2.setPosition(800.f, 50.f); // sposta il secondo a destra (metà finestra)
 
-//   while (win.isOpen()) {
-//     sf::Event e;
-//     while (win.pollEvent(e)) if (e.type == sf::Event::Closed) win.close();
+  while (win.isOpen()) {
+    sf::Event e;
+    while (win.pollEvent(e)) if (e.type == sf::Event::Closed) win.close();
 
-//     win.clear();
-//     win.draw(s1);
-//     win.draw(s2);
-//     win.display();
-//   }
-// }
+    win.clear();
+    win.draw(s1);
+    win.draw(s2);
+    win.display();
+  }
+}
 
 }  // namespace bl

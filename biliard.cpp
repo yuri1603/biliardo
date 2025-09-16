@@ -76,10 +76,10 @@ std::vector<Ball> Biliard::random_balls(long unsigned int N, double y_mean,
 }
 
 void Biliard::Dynamic(Ball &b) {
-  if (std::abs(b.y_coord) > upper_cushion_.y_intercept ||
-      std::abs(b.angle) > (M_PI / 2)) {
-    b = Ball{0., 5.};
-  } else {
+  // if (std::abs(b.y_coord) > upper_cushion_.y_intercept ||
+  //     std::abs(b.angle) > (M_PI / 2)) {
+  //   b = Ball{0., 5.};
+  // } else {
     Path ball_path{{0., b.y_coord}, std::tan(b.angle)};
     Point collision_point =
         first_collision(ball_path, lower_cushion_, upper_cushion_);
@@ -101,7 +101,7 @@ void Biliard::Dynamic(Ball &b) {
                std::atan(ball_path.slope)};
     }
   }
-}
+// }
 
 Sample Biliard::split(std::vector<Ball> &balls) {
   std::vector<Ball> balls_sample{};

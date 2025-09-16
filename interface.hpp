@@ -14,13 +14,16 @@ void run_multi_launch(bl::Biliard &bil);
 
 void biliard_geometry(bl::Biliard &bil);
 
-void move_between_points(sf::RenderWindow &window, sf::CircleShape &shape,
-                         sf::Vector2f start, sf::Vector2f end, float speed
-                        //  , const std::function<void(sf::RenderWindow)>& draw_bg
-                        );
+void move_between_points(
+    sf::RenderWindow &window, sf::CircleShape &shape, sf::Vector2f start,
+    sf::Vector2f end, float speed
+    //  , const std::function<void(sf::RenderWindow)>& draw_bg
+);
 
-void trajectory (std::vector<Point> const& coll, bl::Biliard &bil, float speed);
+void trajectory(std::vector<Point> const &coll, bl::Biliard &bil, float speed);
 
-void show_histograms_sfml();
+void MakeHists(const std::vector<double> &v1, const std::vector<double> &v2);
+
+    void show_histograms_sfml();
 
 }  // namespace bl

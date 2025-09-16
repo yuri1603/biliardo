@@ -34,12 +34,16 @@ string(APPEND CMAKE_EXE_LINKER_FLAGS_DEBUG " -fsanitize=address,undefined")
 
 # se usato, richiedi il componente graphics della libreria SFML (versione 2.6 in Ubuntu 24.04)
 find_package(SFML 2.6 COMPONENTS graphics REQUIRED)
+find_package(ROOT REQUIRED COMPONENTS Core Hist RIO Graf Gpad)    
 
 # dichiara un eseguibile chiamato "progetto", prodotto a partire dai file sorgente indicati
 # sostituire "progetto" con il nome del proprio eseguibile e i file sorgente con i propri (con nomi sensati!)
 add_executable(biliard biliard.cpp main.cpp statistics.cpp interface.cpp)
 # nel caso si usi SFML. analogamente per eventuali altre librerie
 target_link_libraries(biliard PRIVATE sfml-graphics)
+
+# Linka i target moderni di ROOT (porta anche le include dirs)
+target_link_libraries(biliard   PRIVATE ROOT::Core ROOT::Hist ROOT::RIO ROOT::Graf ROOT::Gpad ROOT::Gui ROOT::Rint)
 
 # aggiungere eventuali altri eseguibili
 
