@@ -104,9 +104,10 @@ void Biliard::Dynamic(Ball &b) {
 }
 
 Sample Biliard::split(std::vector<Ball> &balls) {
-  std::vector<Ball> balls_sample;
+  std::vector<Ball> balls_sample{};
+  balls_sample.reserve(balls.size());
   std::for_each(balls.begin(), balls.end(), [&, this](Ball &ball) {
-    this->Dynamic(ball);
+    Dynamic(ball);
     if (ball.angle != 4.) {
       balls_sample.push_back(ball);
     }
