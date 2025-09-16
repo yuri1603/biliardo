@@ -21,4 +21,6 @@ void move_between_points(sf::RenderWindow &window, sf::CircleShape &shape,
 
 void trajectory (std::vector<Point> const& coll, bl::Biliard &bil, float speed);
 
+void show_histograms_sfml();
+
 }  // namespace bl
