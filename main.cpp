@@ -29,7 +29,7 @@ int main() {
         break;
 
       case 'g':
-        bl::build_biliard();
+        bil =  bl::build_biliard();
         break;
 
       case 'e':

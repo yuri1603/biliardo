@@ -59,7 +59,7 @@ class Biliard {
 
   Samples split_for_stats(std::vector<Ball>& initial_balls);
 
-  void trace_trajectory(Ball& ball, std::vector<Point>& subsequent_points, float const offset);
+  void trace_trajectory(Ball& ball, std::vector<Point>& subsequent_points);
 };
 
 }  // namespace bl

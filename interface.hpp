@@ -10,22 +10,22 @@ namespace bl {
 
 void move_between_points(sf::RenderWindow &window, sf::CircleShape &ball,
                          sf::Vector2f &starting_point,
-                         sf::Vector2f &ending_point, float const speed,
+                         sf::Vector2f &ending_point, float const step,
                          sf::RectangleShape const &upper_cushion,
                          sf::RectangleShape const &lower_cushion);
 
 void show_trajectory(std::vector<Point> const &subsequent_point,
-                     bl::Biliard const &bil, float const offset);
+                     bl::Biliard const &bil, float const offset, float const scale_factor);
 
 void make_histograms(std::vector<double> const &ball_ys,
                      std::vector<double> const &ball_angles);
 
 void show_histograms();
 
-void run_single_launch(bl::Biliard &bil);
+void run_single_launch(Biliard &bil);
 
-void run_multi_launch(bl::Biliard &bil);
+void run_multi_launch(Biliard &bil);
 
-bl::Biliard build_biliard();
+Biliard build_biliard();
 
 }  // namespace bl

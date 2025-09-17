@@ -12,11 +12,11 @@ struct Statistics {
   double kurtosis{0.};
 };
 
-double evaluate_mean(std::vector<double> const& sample);
-double evaluate_std_dev(std::vector<double> const& sample);
-double evaluate_skewness(std::vector<double> const& sample);
-double evaluate_kurtosis(std::vector<double> const& sample);
-Statistics evaluate_statistics(std::vector<double> const& sample);
+double compute_mean(std::vector<double> const& sample);
+double compute_std_dev(std::vector<double> const& sample);
+double compute_skewness(std::vector<double> const& sample);
+double compute_kurtosis(std::vector<double> const& sample);
+Statistics compute_statistics(std::vector<double> const& sample);
 
 }  // namespace bl
 

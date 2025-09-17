@@ -107,7 +107,8 @@ Samples Biliard::split_for_stats(std::vector<Ball> &initial_balls) {
   final_balls.reserve(initial_balls.size());
   std::for_each(initial_balls.begin(), initial_balls.end(), [&](Ball &ball) {
     compute_final_position(ball);
-    if (ball.angle != 2.) {  // ignoring left exit balls and balls spawned out of biliard
+    if (ball.angle !=
+        2.) {  // ignoring left exit balls and balls spawned out of biliard
       final_balls.push_back(ball);
     }
   });
@@ -123,15 +124,13 @@ Samples Biliard::split_for_stats(std::vector<Ball> &initial_balls) {
 }
 
 void Biliard::trace_trajectory(Ball &ball,
-                               std::vector<Point> &subsequent_points,
-                               float const offset) {
+                               std::vector<Point> &subsequent_points) {
   Line ball_path{{0., ball.y}, std::tan(ball.angle)};
-  subsequent_points.push_back(Point{offset, ball.y});
+  subsequent_points.push_back(Point{0., ball.y});
   Point collision_point =
       collide_first(ball_path, lower_cushion_, upper_cushion_);
   while (collision_point.x <= lenght_ && collision_point.x >= 0) {
-    subsequent_points.push_back(
-        Point{collision_point.x + offset, collision_point.y});
+    subsequent_points.push_back(Point{collision_point.x, collision_point.y});
     if (collision_point.y > 0) {
       ball_path = bounce(ball_path, upper_cushion_);
       collision_point = intersect(ball_path, lower_cushion_);
@@ -144,12 +143,12 @@ void Biliard::trace_trajectory(Ball &ball,
       (collision_point.x < 0 ||
        collision_point.x > intersect(upper_cushion_, lower_cushion_).x)) {
     ball = Ball{ball_path.y_intercept_, std::atan(ball_path.slope_)};
-    subsequent_points.push_back(Point{offset, ball_path.y_intercept_});
+    subsequent_points.push_back(Point{0., ball_path.y_intercept_});
   } else {
     ball = Ball{ball_path.slope_ * lenght_ + ball_path.y_intercept_,
                 std::atan(ball_path.slope_)};
-    subsequent_points.push_back(Point{
-        lenght_ + offset, ball_path.slope_ * lenght_ + ball_path.y_intercept_});
+    subsequent_points.push_back(
+        Point{lenght_, ball_path.slope_ * lenght_ + ball_path.y_intercept_});
   }
 }
 

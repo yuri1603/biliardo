@@ -54,7 +54,8 @@ void move_between_points(sf::RenderWindow &window, sf::CircleShape &ball,
 }
 
 void show_trajectory(std::vector<Point> const &subsequent_points,
-                     bl::Biliard const &bil, float const offset) {
+                     Biliard const &bil, float const offset,
+                     float const scale_factor) {
   sf::RenderWindow window(sf::VideoMode(1600.f, 900.f), "Biliardo triangolare");
   window.setPosition(sf::Vector2i{10, 10});
 
@@ -66,28 +67,30 @@ void show_trajectory(std::vector<Point> const &subsequent_points,
   sf::RectangleShape upper_cushion;
   upper_cushion.setFillColor(sf::Color::White);
   float upper_rect_lenght =
+      scale_factor *
       static_cast<float>(std::sqrt(bil.get_left_limit() * bil.get_left_limit() +
                                    bil.get_lenght() * bil.get_lenght()));
   upper_cushion.setSize(sf::Vector2f{upper_rect_lenght, 10.f});
-  upper_cushion.setPosition(offset, static_cast<float>(bil.get_left_limit()));
+  upper_cushion.setPosition(
+      offset, static_cast<float>(bil.get_left_limit()) * scale_factor);
   float upper_rect_incl =
       static_cast<float>((180 * std::atan(bil.get_cushion_slope())) / M_PI);
   upper_cushion.setRotation(upper_rect_incl);
   sf::RectangleShape lower_cushion;
   lower_cushion.setFillColor(sf::Color::White);
   lower_cushion.setSize(sf::Vector2f{upper_rect_lenght, 10.f});
-  float lower_rect_pos = static_cast<float>(-bil.get_left_limit());
-  lower_cushion.setPosition(offset, lower_rect_pos);
+  lower_cushion.setPosition(
+      offset, -static_cast<float>(bil.get_left_limit()) * scale_factor);
   float lower_rect_incl = static_cast<float>(360 - upper_rect_incl);
   lower_cushion.setRotation(lower_rect_incl);
 
   sf::CircleShape ball;
   ball.setFillColor(sf::Color::White);
   ball.setRadius(10.f);
-  ball.setOrigin(5.f, 5.f);
-  ball.setPosition(
-      sf::Vector2f{static_cast<float>(subsequent_points.front().x),
-                   static_cast<float>(subsequent_points.front().y)});
+  ball.setOrigin(10.f, 10.f);
+  ball.setPosition(sf::Vector2f{
+      static_cast<float>(subsequent_points.front().x) * scale_factor,
+      static_cast<float>(subsequent_points.front().y) * scale_factor});
 
   window.clear(sf::Color::Black);
   window.draw(ball);
@@ -97,10 +100,12 @@ void show_trajectory(std::vector<Point> const &subsequent_points,
 
   for (std::size_t i = 0; i + 1 < subsequent_points.size() && window.isOpen();
        ++i) {
-    sf::Vector2f A{static_cast<float>(subsequent_points[i].x),
-                   static_cast<float>(subsequent_points[i].y)};
-    sf::Vector2f B{static_cast<float>(subsequent_points[i + 1].x),
-                   static_cast<float>(subsequent_points[i + 1].y)};
+    sf::Vector2f A{
+        static_cast<float>(subsequent_points[i].x) * scale_factor + offset,
+        static_cast<float>(subsequent_points[i].y) * scale_factor};
+    sf::Vector2f B{
+        static_cast<float>(subsequent_points[i + 1].x) * scale_factor + offset,
+        static_cast<float>(subsequent_points[i + 1].y) * scale_factor};
     move_between_points(window, ball, A, B, 2.f, upper_cushion, lower_cushion);
   }
 
@@ -123,15 +128,15 @@ void show_trajectory(std::vector<Point> const &subsequent_points,
 void make_histograms(std::vector<double> const &ball_ys,
                      std::vector<double> const &ball_angles) {
   auto mm1 = std::minmax_element(ball_ys.begin(), ball_ys.end());
-  TH1D h1("h1", "Istogramma degli angoli;Angolo(rad);Ocorrenze", 50, *mm1.first,
-          *mm1.second);
+  TH1D h1("h1", "Istogramma delle ordinate;Ordinata(px);Ocorrenze", 50,
+          *mm1.first, *mm1.second);
   for (double x : ball_ys) h1.Fill(x);
   TCanvas c1("c1", "c1", 800, 500);
   h1.Draw();
   c1.SaveAs("hist1.png");
 
   auto mm2 = std::minmax_element(ball_angles.begin(), ball_angles.end());
-  TH1D h2("h2", "Istogramma delle ordinate;Ordinata(px);Occorrenze", 50,
+  TH1D h2("h2", "Istogramma degli angoli;Angoli(rad);Occorrenze", 50,
           *mm2.first, *mm2.second);
   for (double x : ball_angles) h2.Fill(x);
   TCanvas c2("c2", "c2", 800, 500);
@@ -162,24 +167,23 @@ void show_histograms() {
   }
 }
 
-void run_single_launch(bl::Biliard &bil) {
+void run_single_launch(Biliard &bil) {
   std::cout << "[Modalità lancio singolo]\n";
   bool running = true;
   while (running) {
-    bl::Ball ball_i{};
+    Ball ball{};
     std::cout << "Inserisci ordinata iniziale della palla ( |y| < "
-              << bil.get_left_limit() / 100 << " ) \n";
-    std::cin >> ball_i.y;
-    if (std::abs(ball_i.y) >= bil.get_left_limit() / 100) {
+              << bil.get_left_limit() << " ) \n";
+    std::cin >> ball.y;
+    if (std::abs(ball.y) >= bil.get_left_limit()) {
       throw std::runtime_error("Hai inserito un parametro non valido");
     }
     std::cout << "Inserisci angolo iniziale della palla: ( - π/2 < ϑ < π/2 )\n";
-    std::cin >> ball_i.angle;
-    if (ball_i.angle >= M_PI / 2 || ball_i.angle <= -M_PI / 2) {
+    std::cin >> ball.angle;
+    if (ball.angle >= M_PI / 2 || ball.angle <= -M_PI / 2) {
       throw std::runtime_error("Hai inserito un parametro non valido");
     }
-    Ball ball{ball_i.y * 100, ball_i.angle};
-    bl::Ball initial = ball;
+    Ball initial = ball;
     bil.compute_final_position(ball);
     if (ball.angle == 2.) {
       std::cout << "La palla esce dal lato sinistro del biliardo \n";
@@ -191,9 +195,9 @@ void run_single_launch(bl::Biliard &bil) {
     char ans;
     std::cin >> ans;
     std::vector<Point> subsequent_points;
-    bil.trace_trajectory(initial, subsequent_points, 100.);
+    bil.trace_trajectory(initial, subsequent_points);
     if (ans == 'y') {
-      show_trajectory(subsequent_points, bil, 100.f);
+      show_trajectory(subsequent_points, bil, 1.f, 100.f);
     }
     std::cout << "Vuoi effettuare un altro lancio? [Y/n] \n";
     char answer;
@@ -204,11 +208,11 @@ void run_single_launch(bl::Biliard &bil) {
   }
 }
 
-void run_multi_launch(bl::Biliard &bil) {
+void run_multi_launch(Biliard &bil) {
   std::cout << "[Modalità lanci multipli]\n";
   bool running = true;
   while (running) {
-    std::vector<bl::Ball> sample;
+    std::vector<Ball> sample;
     long int N;
     double y_mean, y_std_dev, angle_mean, angle_std_dev;
     std::cout << "Inserisci il numero di elementi del campione: (N > 2) \n";
@@ -218,7 +222,7 @@ void run_multi_launch(bl::Biliard &bil) {
     }
     std::cout
         << "Inserisci la media delle ordinate iniziali: (si consiglia |y| < "
-        << bil.get_left_limit() / 100 << " )\n";
+        << bil.get_left_limit() << " )\n";
     std::cin >> y_mean;
     std::cout << "Inserisci la deviazione standard delle ordinate iniziali: (σ "
                  "> 0) \n";
@@ -235,15 +239,15 @@ void run_multi_launch(bl::Biliard &bil) {
     if (angle_std_dev <= 0) {
       throw std::runtime_error("Hai inserito un valore non valido");
     }
-    sample = bil.generate_random_balls(static_cast<unsigned long int>(N),
-                                       y_mean * 100, y_std_dev * 100,
-                                       angle_mean, angle_std_dev);
-    bl::Samples ensemble;
+    sample =
+        bil.generate_random_balls(static_cast<unsigned long int>(N), y_mean,
+                                  y_std_dev, angle_mean, angle_std_dev);
+    Samples ensemble;
     ensemble = bil.split_for_stats(sample);
-    bl::Statistics angle_result;
-    angle_result = bl::evaluate_statistics(ensemble.ball_angles);
-    bl::Statistics y_result;
-    y_result = bl::evaluate_statistics(ensemble.ball_ys);
+    Statistics angle_result;
+    angle_result = compute_statistics(ensemble.ball_angles);
+    Statistics y_result;
+    y_result = compute_statistics(ensemble.ball_ys);
     std::cout << "La media delle ordinate finali è: " << y_result.mean << '\n';
     std::cout << "La deviazione standard delle ordinate finali è: "
               << y_result.std_dev << '\n';
@@ -264,7 +268,7 @@ void run_multi_launch(bl::Biliard &bil) {
     char ans;
     std::cin >> ans;
     if (ans == 'y') {
-      make_histograms(ensemble.ball_angles, ensemble.ball_ys);
+      make_histograms(ensemble.ball_ys, ensemble.ball_angles);
       show_histograms();
     }
     std::cout << "Vuoi effettuare un altro lancio multiplo? [Y/n] \n";
@@ -276,34 +280,31 @@ void run_multi_launch(bl::Biliard &bil) {
   }
 }
 
-bl::Biliard build_biliard() {
+Biliard build_biliard() {
   std::cout << "[Nuovi parametri biliardo]\n";
-  double l_i;
-  double y1_i;
-  double y2_i;
+  double l;
+  double y1;
+  double y2;
   std::cout
       << "Inserisci la lunghezza del biliardo: ( l > 0, si consiglia 6 <= "
          "l <= 12 ) \n";
-  std::cin >> l_i;
-  if (l_i <= 0) {
+  std::cin >> l;
+  if (l <= 0) {
     throw std::runtime_error("Hai inserito un valore non valido");
   }
   std::cout << "Inserisci la semiampiezza del lato sinistro del biliardo: ( y "
                "> 0, si consiglia y <= 3.5 )\n";
-  std::cin >> y1_i;
-  if (y1_i <= 0) {
+  std::cin >> y1;
+  if (y1 <= 0) {
     throw std::runtime_error("Hai inserito un valore non valido");
   }
   std::cout << "Inserisci la semiampiezza del lato destro del biliardo: ( y "
                "> 0, si consiglia y <= 3.5 )\n";
-  std::cin >> y2_i;
-  if (y2_i <= 0) {
+  std::cin >> y2;
+  if (y2 <= 0) {
     throw std::runtime_error("Hai inserito un valore non valido");
   }
-  double l = l_i * 100;
-  double y1 = y1_i * 100;
-  double y2 = y2_i * 100;
-  return bl::Biliard(l, y1, y2);
+  return Biliard(l, y1, y2);
 }
 
 }  // namespace bl

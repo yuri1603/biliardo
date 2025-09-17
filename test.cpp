@@ -219,7 +219,7 @@ TEST_CASE("Testing the split_for_stats method") {
 TEST_CASE("Testing evaluate_statistics method") {
   SUBCASE("ensemble size is 5") {
     std::vector<double> vec{5., 2., -3., -1., 0.};
-    bl::Statistics result = bl::evaluate_statistics(vec);
+    bl::Statistics result = bl::compute_statistics(vec);
     CHECK(result.mean == doctest::Approx(0.6).epsilon(0.001));
     CHECK(result.std_dev == doctest::Approx(3.0496).epsilon(0.001));
     CHECK(result.skewness == doctest::Approx(0.2606).epsilon(0.001));
