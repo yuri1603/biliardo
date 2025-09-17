@@ -68,20 +68,21 @@ void show_trajectory(std::vector<Point> const &subsequent_points,
   upper_cushion.setFillColor(sf::Color::White);
   float upper_rect_lenght =
       scale_factor *
-      static_cast<float>(std::sqrt(bil.get_left_limit() * bil.get_left_limit() +
-                                   bil.get_lenght() * bil.get_lenght()));
-  upper_cushion.setSize(sf::Vector2f{upper_rect_lenght, 10.f});
+      static_cast<float>(std::sqrt(
+          bil.get_left_limit() - bil.get_right_limit() * bil.get_left_limit() -
+          bil.get_right_limit() + bil.get_lenght() * bil.get_lenght()));
   upper_cushion.setPosition(
       offset, static_cast<float>(bil.get_left_limit()) * scale_factor);
+  upper_cushion.setSize(sf::Vector2f{upper_rect_lenght, 10.f});
   float upper_rect_incl =
-      static_cast<float>((180 * std::atan(bil.get_cushion_slope())) / M_PI);
+      static_cast<float>((180.f * std::atan(bil.get_cushion_slope())) / M_PI);
   upper_cushion.setRotation(upper_rect_incl);
   sf::RectangleShape lower_cushion;
   lower_cushion.setFillColor(sf::Color::White);
-  lower_cushion.setSize(sf::Vector2f{upper_rect_lenght, 10.f});
   lower_cushion.setPosition(
       offset, -static_cast<float>(bil.get_left_limit()) * scale_factor);
-  float lower_rect_incl = static_cast<float>(360 - upper_rect_incl);
+  lower_cushion.setSize(sf::Vector2f{upper_rect_lenght, 10.f});
+  float lower_rect_incl = 360.f - upper_rect_incl;
   lower_cushion.setRotation(lower_rect_incl);
 
   sf::CircleShape ball;
@@ -191,7 +192,7 @@ void run_single_launch(Biliard &bil) {
       std::cout << "L'ordinata finale della palla è: " << ball.y << '\n';
       std::cout << "L'angolo finale della palla è: " << ball.angle << '\n';
     }
-    std::cout << "Vuoi vedere il lancio? [Y/n] \n";
+    std::cout << "Vuoi vedere il lancio? [y/n] \n";
     char ans;
     std::cin >> ans;
     std::vector<Point> subsequent_points;
@@ -199,7 +200,7 @@ void run_single_launch(Biliard &bil) {
     if (ans == 'y') {
       show_trajectory(subsequent_points, bil, 1.f, 100.f);
     }
-    std::cout << "Vuoi effettuare un altro lancio? [Y/n] \n";
+    std::cout << "Vuoi effettuare un altro lancio? [y/n] \n";
     char answer;
     std::cin >> answer;
     if (answer != 'y') {
@@ -239,9 +240,8 @@ void run_multi_launch(Biliard &bil) {
     if (angle_std_dev <= 0) {
       throw std::runtime_error("Hai inserito un valore non valido");
     }
-    sample =
-        bil.generate_random_balls(static_cast<unsigned long int>(N), y_mean,
-                                  y_std_dev, angle_mean, angle_std_dev);
+    sample = generate_random_balls(static_cast<unsigned long int>(N), y_mean,
+                                   y_std_dev, angle_mean, angle_std_dev);
     Samples ensemble;
     ensemble = bil.split_for_stats(sample);
     Statistics angle_result;
@@ -264,14 +264,14 @@ void run_multi_launch(Biliard &bil) {
     std::cout << "Il coefficiente di appiattimento degli angoli finali è: "
               << angle_result.kurtosis << '\n';
     std::cout << "Vuoi visualizzare gli istogrammi dei parametri in uscita? "
-                 "[Y/n]\n";
+                 "[y/n]\n";
     char ans;
     std::cin >> ans;
     if (ans == 'y') {
       make_histograms(ensemble.ball_ys, ensemble.ball_angles);
       show_histograms();
     }
-    std::cout << "Vuoi effettuare un altro lancio multiplo? [Y/n] \n";
+    std::cout << "Vuoi effettuare un altro lancio multiplo? [y/n] \n";
     std::string answer;
     std::cin >> answer;
     if (answer != "y") {

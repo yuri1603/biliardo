@@ -34,6 +34,12 @@ Point collide_first(Line const& l1, Line const& l2, Line const& l3);
 
 Line bounce(Line const& l1, Line const& l2);
 
+std::vector<Ball> generate_random_balls(long unsigned int const N,
+                                        double const y_mean,
+                                        double const y_std_dev,
+                                        double const angle_mean,
+                                        double const angle_std_dev);
+
 class Biliard {
   Line upper_cushion_;
   Line lower_cushion_;
@@ -49,17 +55,12 @@ class Biliard {
   inline double get_lenght() const { return lenght_; }
   inline double get_cushion_slope() const { return upper_cushion_.slope_; }
 
-  void compute_final_position(Ball& b);
+  void compute_final_position(Ball& b) const;
 
-  std::vector<Ball> generate_random_balls(long unsigned int const N,
-                                          double const y_mean,
-                                          double const y_std_dev,
-                                          double const angle_mean,
-                                          double const angle_std_dev);
+  Samples split_for_stats(std::vector<Ball>& initial_balls) const;
 
-  Samples split_for_stats(std::vector<Ball>& initial_balls);
-
-  void trace_trajectory(Ball& ball, std::vector<Point>& subsequent_points);
+  void trace_trajectory(Ball& ball,
+                        std::vector<Point>& subsequent_points) const;
 };
 
 }  // namespace bl

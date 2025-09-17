@@ -31,8 +31,8 @@ Point intersect(const Line &l1, const Line &l2) {
 }
 
 Point collide_first(Line const &l1, Line const &l2, Line const &l3) {
-  Point p1 = intersect(l1, l2);
-  Point p2 = intersect(l1, l3);
+  Point const p1 = intersect(l1, l2);
+  Point const p2 = intersect(l1, l3);
   if (p1.x < 0) {
     return p2;
   }
@@ -55,7 +55,7 @@ Biliard::Biliard(double l, double y1, double y2)
       lower_cushion_({0., -y1}, {l, -y2}),
       lenght_(l) {}
 
-void Biliard::compute_final_position(Ball &ball) {
+void Biliard::compute_final_position(Ball &ball) const {
   if (std::abs(ball.y) > upper_cushion_.y_intercept_ ||
       std::abs(ball.angle) > (M_PI / 2)) {
     ball = Ball{
@@ -85,11 +85,11 @@ void Biliard::compute_final_position(Ball &ball) {
   }
 }
 
-std::vector<Ball> Biliard::generate_random_balls(long unsigned int const N,
-                                                 double const y_mean,
-                                                 double const y_std_dev,
-                                                 double const angle_mean,
-                                                 double const angle_std_dev) {
+std::vector<Ball> generate_random_balls(long unsigned int const N,
+                                        double const y_mean,
+                                        double const y_std_dev,
+                                        double const angle_mean,
+                                        double const angle_std_dev) {
   std::random_device r;
   std::default_random_engine eng{r()};
   std::normal_distribution<double> ys_distribution{y_mean, y_std_dev};
@@ -102,29 +102,24 @@ std::vector<Ball> Biliard::generate_random_balls(long unsigned int const N,
   return random_balls;
 }
 
-Samples Biliard::split_for_stats(std::vector<Ball> &initial_balls) {
-  std::vector<Ball> final_balls{};
-  final_balls.reserve(initial_balls.size());
+Samples Biliard::split_for_stats(std::vector<Ball> &initial_balls) const {
+  std::vector<double> angles_sample;
+  angles_sample.reserve(initial_balls.size());
+  std::vector<double> y_coords_sample;
+  y_coords_sample.reserve(initial_balls.size());
   std::for_each(initial_balls.begin(), initial_balls.end(), [&](Ball &ball) {
     compute_final_position(ball);
     if (ball.angle !=
         2.) {  // ignoring left exit balls and balls spawned out of biliard
-      final_balls.push_back(ball);
+      angles_sample.push_back(ball.angle);
+      y_coords_sample.push_back(ball.y);
     }
-  });
-  std::vector<double> angles_sample;
-  angles_sample.reserve(final_balls.size());
-  std::vector<double> y_coords_sample;
-  y_coords_sample.reserve(final_balls.size());
-  std::for_each(final_balls.begin(), final_balls.end(), [&](Ball const &ball) {
-    angles_sample.push_back(ball.angle);
-    y_coords_sample.push_back(ball.y);
   });
   return Samples{y_coords_sample, angles_sample};
 }
 
 void Biliard::trace_trajectory(Ball &ball,
-                               std::vector<Point> &subsequent_points) {
+                               std::vector<Point> &subsequent_points) const {
   Line ball_path{{0., ball.y}, std::tan(ball.angle)};
   subsequent_points.push_back(Point{0., ball.y});
   Point collision_point =
