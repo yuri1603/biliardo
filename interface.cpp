@@ -128,19 +128,19 @@ void show_trajectory(std::vector<Point> const &subsequent_points,
 
 void make_histograms(std::vector<double> const &ball_ys,
                      std::vector<double> const &ball_angles) {
-  auto mm1 = std::minmax_element(ball_ys.begin(), ball_ys.end());
-  TH1D h1("h1", "Istogramma delle ordinate;Ordinata(px);Ocorrenze", 50,
+  auto const mm1 = std::minmax_element(ball_ys.begin(), ball_ys.end());
+  TH1D h1("h1", "Istogramma delle ordinate;Ordinata(px);Occorrenze", 50,
           *mm1.first, *mm1.second);
   for (double x : ball_ys) h1.Fill(x);
-  TCanvas c1("c1", "c1", 800, 500);
+  TCanvas const c1("c1", "c1", 800, 500);
   h1.Draw();
   c1.SaveAs("hist1.png");
 
-  auto mm2 = std::minmax_element(ball_angles.begin(), ball_angles.end());
+  auto const mm2 = std::minmax_element(ball_angles.begin(), ball_angles.end());
   TH1D h2("h2", "Istogramma degli angoli;Angoli(rad);Occorrenze", 50,
           *mm2.first, *mm2.second);
   for (double x : ball_angles) h2.Fill(x);
-  TCanvas c2("c2", "c2", 800, 500);
+  TCanvas const c2("c2", "c2", 800, 500);
   h2.Draw();
   c2.SaveAs("hist2.png");
 }
@@ -244,10 +244,8 @@ void run_multi_launch(Biliard &bil) {
                                    y_std_dev, angle_mean, angle_std_dev);
     Samples ensemble;
     ensemble = bil.split_for_stats(sample);
-    Statistics angle_result;
-    angle_result = compute_statistics(ensemble.ball_angles);
-    Statistics y_result;
-    y_result = compute_statistics(ensemble.ball_ys);
+    Statistics angle_result = compute_statistics(ensemble.ball_angles);
+    Statistics y_result = compute_statistics(ensemble.ball_ys);
     std::cout << "La media delle ordinate finali è: " << y_result.mean << '\n';
     std::cout << "La deviazione standard delle ordinate finali è: "
               << y_result.std_dev << '\n';

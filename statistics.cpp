@@ -11,16 +11,16 @@ double compute_mean(std::vector<double> const& sample) {
 }
 
 double compute_std_dev(std::vector<double> const& sample) {
-  double mu = compute_mean(sample);
-  double num = std::accumulate(
+  const double mu = compute_mean(sample);
+  const double num = std::accumulate(
       sample.begin(), sample.end(), 0.,
       [=](double acc, double x) { return acc + (x - mu) * (x - mu); });
   return std::sqrt(num / static_cast<double>(sample.size() - 1));
 }
 
 double compute_skewness(std::vector<double> const& sample) {
-  double mu = compute_mean(sample);
-  double sigma = compute_std_dev(sample);
+  const double mu = compute_mean(sample);
+  const double sigma = compute_std_dev(sample);
   double num = std::accumulate(sample.begin(), sample.end(), 0.,
                                [=](double acc, double x) {
                                  return acc + std::pow((x - mu) / sigma, 3);
@@ -29,8 +29,8 @@ double compute_skewness(std::vector<double> const& sample) {
 }
 
 double compute_kurtosis(std::vector<double> const& sample) {
-  double mu = compute_mean(sample);
-  double sigma = compute_std_dev(sample);
+  const double mu = compute_mean(sample);
+  const double sigma = compute_std_dev(sample);
   double num = std::accumulate(sample.begin(), sample.end(), 0.,
                                [=](double acc, double x) {
                                  return acc + std::pow((x - mu) / sigma, 4);
