@@ -11,55 +11,55 @@ struct Point {
 };
 
 struct Ball {
-  double y_coord{0.};
+  double y{0.};
   double angle{0.};
 };
 
-struct Sample {
-  std::vector<double> angles;
-  std::vector<double> y_coord;
+struct Line {
+  double slope_{0.};
+  double y_intercept_{0.};
+  Line(double const slope, double const y_intercept);
+  Line(Point const& p1, Point const& p2);
+  Line(Point const& p, double const slope);
 };
 
-struct Path {
-  double slope{0.};
-  double y_intercept{0.};
-  Path(double slope, double y_intercept);
-  Path(Point const& p1, Point const& p2);
-  Path(Point const& p1, double slope1);
+struct Samples {
+  std::vector<double> ball_ys{};
+  std::vector<double> ball_angles{};
 };
 
-Point collision(
-    Path const& r1,
-    Path const& r2);  // prende due rette e restituisce il punto di intersezione
+Point intersect(Line const& l1, Line const& l2);
 
-Point first_collision(Path const& r1, Path const& r2, Path const& r3);
+Point collide_first(Line const& l1, Line const& l2, Line const& l3);
 
-Path Bounce(Path const& r1, Path const& r2);
+Line bounce(Line const& l1, Line const& l2);
 
 class Biliard {
-  Path upper_cushion_;
-  Path lower_cushion_;
+  Line upper_cushion_;
+  Line lower_cushion_;
   double lenght_;
 
  public:
-  Biliard(double l, double y1, double y2);
+  Biliard(double const l, double const y1, double const y2);
 
-  inline double left_limit() const { return upper_cushion_.y_intercept; }
-  inline double right_limit() const {
-    return upper_cushion_.slope * lenght_ + upper_cushion_.y_intercept;
+  inline double get_left_limit() const { return upper_cushion_.y_intercept_; }
+  inline double get_right_limit() const {
+    return upper_cushion_.slope_ * lenght_ + upper_cushion_.y_intercept_;
   }
-  inline double lenght() const { return lenght_; }
-  inline double incl() const { return upper_cushion_.slope; }
+  inline double get_lenght() const { return lenght_; }
+  inline double get_cushion_slope() const { return upper_cushion_.slope_; }
 
-  void Dynamic(Ball& b);
+  void compute_final_position(Ball& b);
 
-  Sample split(std::vector<Ball>& balls);
+  std::vector<Ball> generate_random_balls(long unsigned int const N,
+                                          double const y_mean,
+                                          double const y_std_dev,
+                                          double const angle_mean,
+                                          double const angle_std_dev);
 
-  std::vector<Ball> random_balls(long unsigned int N, double y_mean,
-                                 double y_std_dev, double angle_mean,
-                                 double angle_std_dev);
+  Samples split_for_stats(std::vector<Ball>& initial_balls);
 
-  void Dynamic_Trace (Ball& b, std::vector<Point> &coll);
+  void trace_trajectory(Ball& ball, std::vector<Point>& subsequent_points, float const offset);
 };
 
 }  // namespace bl

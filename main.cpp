@@ -1,16 +1,16 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <stdexcept>
 
 #include "biliard.hpp"
 #include "interface.hpp"
 
 int main() {
   bool running = true;
-  bl::Biliard bil(1., 1., 1.);
 
   std::cout << "=== Simulatore biliardo triangolare ===\n";
 
-  bl::biliard_geometry(bil);
+  bl::Biliard bil = bl::build_biliard();
 
   while (running) {
     std::cout << "\n> ";
@@ -21,15 +21,15 @@ int main() {
 
     switch (command) {
       case 's':
-        run_single_launch(bil);
+        bl::run_single_launch(bil);
         break;
 
       case 'm':
-        run_multi_launch(bil);
+        bl::run_multi_launch(bil);
         break;
 
       case 'g':
-        biliard_geometry(bil);
+        bl::build_biliard();
         break;
 
       case 'e':
@@ -37,8 +37,8 @@ int main() {
         break;
 
       default:
-        std::cout << "Comando non riconosciuto.\n";
-        break;
+        std::cout << "Hai inserito un carattere non valido \n";
+        throw std::runtime_error("Invalid parameter");
     }
   }
 

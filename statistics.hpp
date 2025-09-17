@@ -3,8 +3,6 @@
 
 #include <vector>
 
-// #include "biliard.hpp"
-
 namespace bl {
 
 struct Statistics {
@@ -14,11 +12,11 @@ struct Statistics {
   double kurtosis{0.};
 };
 
-double mean(std::vector<double> const& sample);
-double std_dev(std::vector<double> const& sample);
-double skewness(std::vector<double> const& sample);
-double kurtosis(std::vector<double> const& sample);
-Statistics stats(std::vector<double> const& sample);
+double evaluate_mean(std::vector<double> const& sample);
+double evaluate_std_dev(std::vector<double> const& sample);
+double evaluate_skewness(std::vector<double> const& sample);
+double evaluate_kurtosis(std::vector<double> const& sample);
+Statistics evaluate_statistics(std::vector<double> const& sample);
 
 }  // namespace bl
 
